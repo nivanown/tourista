@@ -2281,50 +2281,8 @@ section .lightpick__day.is-in-range:hover:after {
 .authentication-section {
   position: relative;
   padding: 40px 0 80px;
-}
-.authentication-section__dec-left {
-  position: absolute;
-  width: 1008px;
-  height: 1008px;
-  top: 78px;
-  left: -315px;
-  border-radius: 100%;
-}
-.authentication-section__dec-left:before {
-  position: absolute;
-  display: block;
-  width: 1px;
-  height: 1px;
-  top: 50%;
-  left: 50%;
-  background: var(--quaternary-background-color);
-  border-radius: 100%;
-  box-shadow: 0 0 1000px 1000px var(--quaternary-background-color);
-  opacity: 0.2;
-  content: "";
-  z-index: 3;
-}
-.authentication-section__dec-right {
-  position: absolute;
-  width: 1008px;
-  height: 1008px;
-  top: 0;
-  right: -384px;
-  border-radius: 100%;
-}
-.authentication-section__dec-right:before {
-  position: absolute;
-  display: block;
-  width: 1px;
-  height: 1px;
-  top: 50%;
-  left: 50%;
-  background: var(--quaternary-background-color);
-  border-radius: 100%;
-  box-shadow: 0 0 1000px 1000px var(--fifth-background-color);
-  opacity: 0.2;
-  content: "";
-  z-index: 2;
+  background: url(../img/bg/gl-dec.jpg) top center no-repeat;
+  background-size: 100%;
 }
 .authentication-section__in {
   position: relative;
