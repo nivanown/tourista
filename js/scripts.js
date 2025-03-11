@@ -818,9 +818,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const checkbox = document.getElementById("other-city");
     const cityInput = document.querySelector(".city-input");
 
-    checkbox.addEventListener("change", function () {
-        cityInput.disabled = !checkbox.checked;
-    });
+    if (checkbox && cityInput) {
+        checkbox.addEventListener("change", function () {
+            cityInput.disabled = !checkbox.checked;
+        });
+    }
 });
 
 /*- modal -*/
