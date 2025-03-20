@@ -78,21 +78,19 @@ document.addEventListener('DOMContentLoaded', () => {
         );
 
         selectElements.forEach(selectElement => {
-            // Добавляем наблюдатель за изменением классов
+
             const observer = new MutationObserver(() => {
                 updateWidgetState();
             });
 
             observer.observe(selectElement, { attributes: true });
 
-            // Дополнительно обрабатываем клик
             selectElement.addEventListener('click', () => {
                 updateWidgetState();
             });
         });
     });
 
-    // Устанавливаем начальное состояние
     updateWidgetState();
 });
 
