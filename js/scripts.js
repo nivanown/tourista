@@ -174,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const selects = document.querySelectorAll(".select");
     const selectCalendars = document.querySelectorAll(".select-calendar");
     const selectQuantity = document.querySelector(".select-quantity");
+    const selectRooms = document.querySelectorAll(".select-rooms");
 
     function closeAll(event) {
         selects.forEach(select => {
@@ -199,90 +200,67 @@ document.addEventListener("DOMContentLoaded", () => {
             selectTextQuantity.classList.remove("open");
             selectDropdownQuantity.classList.remove("show");
         }
+
+        selectRooms.forEach(selectRoom => {
+            if (!selectRoom.contains(event.target)) {
+                selectRoom.classList.remove("open");
+                const selectTextRoom = selectRoom.querySelector(".select-rooms__text");
+                const selectDropdownRoom = selectRoom.querySelector(".select-rooms__dropdown");
+                selectTextRoom.classList.remove("open");
+                selectDropdownRoom.classList.remove("show");
+            }
+        });
     }
 
     selects.forEach(select => {
         const selectText = select.querySelector(".select__text");
         const selectDropdown = select.querySelector(".select__dropdown");
-        const listItems = select.querySelectorAll(".select__dropdown li");
-        const input = select.querySelector("input[type='text']");
-        const placeholderText = select.querySelector(".select__placeholder-text");
-
-        input.value = selectText.textContent;
-
         selectText.addEventListener("click", (event) => {
             event.stopPropagation();
             const isOpen = select.classList.contains("open");
-
             closeAll(event);
-            if (isOpen) {
-                select.classList.remove("open");
-                selectDropdown.classList.remove("show");
-            } else {
-                select.classList.add("open");
-                selectDropdown.classList.add("show");
-            }
-        });
-
-        listItems.forEach(item => {
-            item.addEventListener("click", (event) => {
-                event.stopPropagation();
-                listItems.forEach(li => li.classList.remove("active"));
-                item.classList.add("active");
-
-                selectText.textContent = item.textContent;
-                input.value = item.textContent;
-
-                if (placeholderText) {
-                    placeholderText.classList.add("hidden");
-                }
-                select.classList.add("selected");
-
-                select.classList.remove("open");
-                selectDropdown.classList.remove("show");
-            });
+            select.classList.toggle("open", !isOpen);
+            selectDropdown.classList.toggle("show", !isOpen);
         });
     });
 
     selectCalendars.forEach(selectCalendar => {
         const selectText = selectCalendar.querySelector(".select-calendar__text");
         const dropdown = selectCalendar.querySelector(".select-calendar__dropdown");
-
         selectText.addEventListener("click", (event) => {
             event.stopPropagation();
             const isOpen = selectCalendar.classList.contains("open");
-
             closeAll(event);
-            if (isOpen) {
-                selectCalendar.classList.remove("open");
-                dropdown.classList.remove("show");
-            } else {
-                selectCalendar.classList.add("open");
-                dropdown.classList.add("show");
-            }
+            selectCalendar.classList.toggle("open", !isOpen);
+            dropdown.classList.toggle("show", !isOpen);
         });
     });
 
     if (selectQuantity) {
         const selectTextQuantity = selectQuantity.querySelector(".select-quantity__text");
         const selectDropdownQuantity = selectQuantity.querySelector(".select-quantity__dropdown");
-
         selectTextQuantity.addEventListener("click", (event) => {
             event.stopPropagation();
             const isOpen = selectQuantity.classList.contains("open");
-
             closeAll(event);
-            if (isOpen) {
-                selectQuantity.classList.remove("open");
-                selectTextQuantity.classList.remove("open");
-                selectDropdownQuantity.classList.remove("show");
-            } else {
-                selectQuantity.classList.add("open");
-                selectTextQuantity.classList.add("open");
-                selectDropdownQuantity.classList.add("show");
-            }
+            selectQuantity.classList.toggle("open", !isOpen);
+            selectTextQuantity.classList.toggle("open", !isOpen);
+            selectDropdownQuantity.classList.toggle("show", !isOpen);
         });
     }
+
+    selectRooms.forEach(selectRoom => {
+        const selectTextRoom = selectRoom.querySelector(".select-rooms__text");
+        const selectDropdownRoom = selectRoom.querySelector(".select-rooms__dropdown");
+        selectTextRoom.addEventListener("click", (event) => {
+            event.stopPropagation();
+            const isOpen = selectRoom.classList.contains("open");
+            closeAll(event);
+            selectRoom.classList.toggle("open", !isOpen);
+            selectTextRoom.classList.toggle("open", !isOpen);
+            selectDropdownRoom.classList.toggle("show", !isOpen);
+        });
+    });
 
     document.addEventListener("click", closeAll);
 });
@@ -315,12 +293,13 @@ document.addEventListener("DOMContentLoaded", () => {
         input.value = 0;
         updateDisplay(0);
 
-        btnAdd.addEventListener("click", () => {
+        btnAdd.onclick = () => {
             let value = parseInt(input.value, 10) || 0;
             if (value < 999) {
                 updateDisplay(value + 1);
             }
-        });
+        };
+
 
         btnRemove.addEventListener("click", () => {
             let value = parseInt(input.value, 10) || 0;
@@ -409,53 +388,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
     
-    document.addEventListener("click", function (event) {
-        if (event.target.classList.contains("switch-input__add")) {
-            const inputBlock = event.target.closest(".switch-input");
-            if (inputBlock && inputBlock.hasAttribute("id")) {
-                const inputField = inputBlock.querySelector("input[type='text']");
-                const numberSpan = inputBlock.querySelector(".switch-input__number");
-                const removeButton = inputBlock.querySelector(".switch-input__remove");
-                if (inputField) {
-                    let value = parseInt(inputField.value, 10) || 0;
-                    inputField.value = value + 1;
-                    if (numberSpan) numberSpan.textContent = inputField.value;
-                    if (removeButton) removeButton.classList.remove("disabled");
-                }
-                updateTotalQuantity();
-            }
-        }
-        
-        if (event.target.classList.contains("switch-input__remove")) {
-            const inputBlock = event.target.closest(".switch-input");
-            if (inputBlock && inputBlock.hasAttribute("id")) {
-                const inputField = inputBlock.querySelector("input[type='text']");
-                const numberSpan = inputBlock.querySelector(".switch-input__number");
-                const removeButton = inputBlock.querySelector(".switch-input__remove");
-                if (inputField) {
-                    let value = parseInt(inputField.value, 10) || 0;
-                    if (value > 0) {
-                        inputField.value = value - 1;
-                        if (numberSpan) numberSpan.textContent = inputField.value;
-                    }
-                    if (parseInt(inputField.value, 10) === 0) {
-                        inputBlock.classList.add("hidden");
-                        if (removeButton) removeButton.classList.add("disabled");
-                        toggleSelectAgeVisibility();
-                        
-                        const age = inputBlock.getAttribute("id");
-                        const listItem = document.querySelector(`.select-age ul li[data-age='${age}']`);
-                        if (listItem) {
-                            listItem.classList.remove("active");
-                        }
-                    }
-                }
-                updateTotalQuantity();
-                toggleSelectAgeVisibility();
-            }
-        }
-    });
-    
     function updateTotalQuantity() {
         let total = 0;
         document.querySelectorAll(".switch-input[id]:not(.hidden) input[type='text']").forEach(input => {
@@ -479,6 +411,128 @@ document.addEventListener("DOMContentLoaded", function () {
             selectAgeBlock.classList.remove("hidden");
         }
     }
+});
+
+/*- select-rooms -*/
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".select-rooms").forEach(selectRooms => {
+        const textDisplay = selectRooms.querySelector(".select-rooms__text");
+        const fieldInput = selectRooms.querySelector(".select-rooms__main-input");
+        const inputs = selectRooms.querySelectorAll(".switch-input");
+        const placeholderText = selectRooms.querySelector(".select-rooms__placeholder-text");
+
+        function updateText() {
+            const values = [];
+            inputs.forEach(input => {
+                const number = input.querySelector(".switch-input__number");
+                const text = input.querySelector(".switch-input__text").textContent.trim();
+                const count = parseInt(number.textContent, 10) || 0;
+                if (count > 0) {
+                    values.push(`(${count}) ${text}`);
+                }
+            });
+
+            const hasSelection = values.length > 0;
+            textDisplay.textContent = hasSelection ? values.join(", ") : "";
+
+            if (fieldInput) {
+                fieldInput.value = textDisplay.textContent;
+            }
+
+            if (hasSelection) {
+                selectRooms.classList.add("selected");
+                if (placeholderText) placeholderText.classList.add("hidden");
+            } else {
+                selectRooms.classList.remove("selected");
+                if (placeholderText) placeholderText.classList.remove("hidden");
+            }
+        }
+
+        inputs.forEach(input => {
+            const number = input.querySelector(".switch-input__number");
+            const observer = new MutationObserver(updateText);
+            observer.observe(number, { childList: true, subtree: true });
+        });
+
+        updateText();
+    });
+});
+
+/*- select-quantities -*/
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".select-rooms").forEach(selectRooms => {
+        const roomSelectItems = selectRooms.querySelectorAll(".select-quantities__dropdown ul li");
+        const totalRoomsText = selectRooms.querySelector(".select-rooms__text");
+        const totalRoomsInput = selectRooms.querySelector(".select-rooms__main-input");
+        const switchInputs = selectRooms.querySelectorAll(".switch-input");
+        const selectQuantities = selectRooms.querySelector(".select-quantities");
+        
+        roomSelectItems.forEach(item => {
+            item.addEventListener("click", function () {
+                const roomId = this.getAttribute("data-age");
+                const roomBlock = selectRooms.querySelector(`#${roomId}`);
+                
+                if (roomBlock) {
+                    roomBlock.classList.remove("hidden");
+                    this.classList.add("active");
+                    initializeInput(roomBlock);
+                    updateTotalRooms();
+                    checkAllSelected();
+                }
+            });
+        });
+        
+        selectRooms.addEventListener("click", function (event) {
+            if (event.target.matches(".switch-input__add, .switch-input__remove")) {
+                handleSwitchInput(event.target);
+            }
+        });
+        
+        function initializeInput(roomBlock) {
+            const inputField = roomBlock.querySelector("input[type='text']");
+            const numberSpan = roomBlock.querySelector(".switch-input__number");
+            const removeButton = roomBlock.querySelector(".switch-input__remove");
+            
+            if (inputField) {
+                inputField.value = "1";
+                if (numberSpan) numberSpan.textContent = "1";
+                if (removeButton) removeButton.classList.remove("disabled");
+            }
+        }
+        
+        function updateTotalRooms() {
+            let total = 0;
+            switchInputs.forEach(inputBlock => {
+                const inputField = inputBlock.querySelector("input[type='text']");
+                if (inputField) {
+                    total += parseInt(inputField.value, 10) || 0;
+                }
+            });
+            totalRoomsText.textContent = total > 0 ? `Выбрано номеров: ${total}` : "Количество номеров";
+            totalRoomsInput.value = total > 0 ? total : "";
+        }
+        
+        function checkAllSelected() {
+            const allItems = selectRooms.querySelectorAll(".select-quantities__dropdown ul li");
+            const activeItems = selectRooms.querySelectorAll(".select-quantities__dropdown ul li.active");
+            selectQuantities.classList.toggle("hidden", allItems.length === activeItems.length);
+        }
+    });
+});
+
+/*- select-quantity -*/
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".select-quantities").forEach(selectBlock => {
+        const selectText = selectBlock.querySelector(".select-quantities__text");
+        const dropdown = selectBlock.querySelector(".select-quantities__dropdown");
+
+        if (selectText && dropdown) {
+            selectText.addEventListener("click", () => {
+                selectText.classList.toggle("open");
+                dropdown.classList.toggle("show");
+            });
+        }
+    });
 });
 
 /*- email-input -*/
