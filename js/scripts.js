@@ -47,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     widgets[0].classList.remove('disabled');
 
-    /*- Обновление состояния виджетов -*/
     const updateWidgetState = () => {
         widgets.forEach((widget, index) => {
             if (index === 0) {
@@ -69,13 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (allSelected) {
                 widget.classList.remove('disabled');
-            } else {
-                widget.classList.add('disabled');
             }
         });
     };
 
-    /*- Добавление наблюдателей -*/
     widgets.forEach((widget) => {
         const selectElements = widget.querySelectorAll(
             '.select, .select-quantity, .date-trip-input, .select-calendar'
