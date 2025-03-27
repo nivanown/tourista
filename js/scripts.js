@@ -36,7 +36,7 @@ if (languageFlag && languageDropdown && languageBlock) {
     });
 }
 
-/*- constructor-widget 
+/*- constructor-widget -*/
 document.addEventListener('DOMContentLoaded', () => {
     const widgets = document.querySelectorAll('.constructor-widget');
 
@@ -47,17 +47,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     widgets[0].classList.remove('disabled');
 
+    /*- Обновление состояния виджетов -*/
     const updateWidgetState = () => {
         widgets.forEach((widget, index) => {
             if (index === 0) {
-
                 widget.classList.remove('disabled');
                 return;
             }
 
             const previousWidget = widgets[index - 1];
             const previousSelectElements = previousWidget.querySelectorAll(
-                '.select, .select-quantity, .date-trip-input, .select-calendar'
+                '.select:not(.constructor-widget__dropdown *), ' +
+                '.select-quantity:not(.constructor-widget__dropdown *), ' +
+                '.date-trip-input:not(.constructor-widget__dropdown *), ' +
+                '.select-calendar:not(.constructor-widget__dropdown *)'
             );
 
             const allSelected = Array.from(previousSelectElements).every(el =>
@@ -72,18 +75,18 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    /*- Добавление наблюдателей -*/
     widgets.forEach((widget) => {
         const selectElements = widget.querySelectorAll(
             '.select, .select-quantity, .date-trip-input, .select-calendar'
         );
 
         selectElements.forEach(selectElement => {
-
             const observer = new MutationObserver(() => {
                 updateWidgetState();
             });
 
-            observer.observe(selectElement, { attributes: true });
+            observer.observe(selectElement, { attributes: true, subtree: false, childList: false });
 
             selectElement.addEventListener('click', () => {
                 updateWidgetState();
@@ -92,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateWidgetState();
-});-*/
+});
 
 /*- custom-number -*/
 function setupNumberInputs() {
@@ -215,12 +218,37 @@ document.addEventListener("DOMContentLoaded", () => {
     selects.forEach(select => {
         const selectText = select.querySelector(".select__text");
         const selectDropdown = select.querySelector(".select__dropdown");
+        const listItems = select.querySelectorAll(".select__dropdown li");
+        const input = select.querySelector("input[type='text']");
+        const placeholderText = select.querySelector(".select__placeholder-text");
+
+        input.value = selectText.textContent;
+
         selectText.addEventListener("click", (event) => {
             event.stopPropagation();
             const isOpen = select.classList.contains("open");
             closeAll(event);
             select.classList.toggle("open", !isOpen);
             selectDropdown.classList.toggle("show", !isOpen);
+        });
+
+        listItems.forEach(item => {
+            item.addEventListener("click", (event) => {
+                event.stopPropagation();
+                listItems.forEach(li => li.classList.remove("active"));
+                item.classList.add("active");
+
+                selectText.textContent = item.textContent;
+                input.value = item.textContent;
+
+                if (placeholderText) {
+                    placeholderText.classList.add("hidden");
+                }
+                select.classList.add("selected");
+
+                select.classList.remove("open");
+                selectDropdown.classList.remove("show");
+            });
         });
     });
 
