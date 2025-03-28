@@ -127,6 +127,116 @@ function setupNumberInputs() {
 
 document.addEventListener("DOMContentLoaded", setupNumberInputs);
 
+/*- tour-days 
+document.addEventListener("DOMContentLoaded", () => {
+    const dateInput = document.getElementById("date-trip");
+    const tourDaysText = document.querySelector(".tour-days-text");
+    const tourDays = document.querySelector(".tour-days");
+
+    if (!dateInput || !tourDaysText || !tourDays) return;
+
+    const updateVisibility = () => {
+        if (dateInput.value.trim() !== "") {
+            tourDaysText.classList.add("hidden");
+            tourDays.classList.remove("hidden");
+        } else {
+            tourDaysText.classList.remove("hidden");
+            tourDays.classList.add("hidden");
+        }
+    };
+
+    // Lightpick
+    const picker = new Lightpick({
+        field: dateInput,
+        singleDate: false,
+        format: "DD.MM.YYYY",
+        onSelect: updateVisibility,
+        onClose: updateVisibility,
+    });
+
+    // Отслеживание изменения value через setInterval
+    let lastValue = dateInput.value;
+    setInterval(() => {
+        if (dateInput.value !== lastValue) {
+            lastValue = dateInput.value;
+            updateVisibility();
+        }
+    }, 500);
+
+    updateVisibility();
+});-*/
+
+/*- этот код для автоматического вывода дней -*/
+document.addEventListener("DOMContentLoaded", () => {
+    const dateInput = document.getElementById("date-trip");
+    const tourDaysText = document.querySelector(".tour-days-text");
+    const tourDays = document.querySelector(".tour-days");
+
+    if (!dateInput || !tourDaysText || !tourDays) return;
+
+    const updateVisibility = () => {
+        if (dateInput.value.trim() !== "") {
+            tourDaysText.classList.add("hidden");
+            tourDays.classList.remove("hidden");
+            updateTourDays();
+        } else {
+            tourDaysText.classList.remove("hidden");
+            tourDays.classList.add("hidden");
+        }
+    };
+
+    const updateTourDays = () => {
+        tourDays.innerHTML = "";
+
+        const dateRange = dateInput.value.split(" - ");
+        if (dateRange.length === 2) {
+            const [startDate, endDate] = dateRange.map(date => date.trim());
+            const start = new Date(startDate.split(".").reverse().join("-"));
+            const end = new Date(endDate.split(".").reverse().join("-"));
+
+            let current = new Date(start);
+            let index = 1;
+
+            while (current <= end) {
+                const formattedDate = current.toLocaleDateString("ru-RU", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "2-digit",
+                });
+
+                const dayItem = document.createElement("div");
+                dayItem.classList.add("tour-days__item");
+                dayItem.innerHTML = `
+                    <input id="day-${index}" type="radio" name="tour-days">
+                    <label for="day-${index}">${formattedDate}</label>
+                `;
+                tourDays.appendChild(dayItem);
+
+                current.setDate(current.getDate() + 1);
+                index++;
+            }
+        }
+    };
+
+    const picker = new Lightpick({
+        field: dateInput,
+        singleDate: false,
+        format: "DD.MM.YYYY",
+        onSelect: updateVisibility,
+        onClose: updateVisibility,
+    });
+
+    let lastValue = dateInput.value;
+    setInterval(() => {
+        if (dateInput.value !== lastValue) {
+            lastValue = dateInput.value;
+            updateVisibility();
+        }
+    }, 500);
+
+    updateVisibility();
+});
+
 /*- transport -*/
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.transport__content').forEach(content => {
@@ -381,60 +491,91 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /*- select-age -*/
 document.addEventListener("DOMContentLoaded", function () {
-    const ageSelectItems = document.querySelectorAll(".select-age ul li");
-    const selectAgeBlock = document.querySelector(".select-age");
-    const totalQuantityText = document.querySelector(".select-quantity__text");
-    const totalQuantityInput = document.querySelector(".select-quantity__main-input");
-    
-    ageSelectItems.forEach(item => {
-        item.addEventListener("click", function () {
-            const age = this.getAttribute("data-age");
-            const inputBlock = document.getElementById(age);
-            
-            if (inputBlock && inputBlock.hasAttribute("id")) {
-                inputBlock.classList.remove("hidden");
-                this.classList.add("active");
-                toggleSelectAgeVisibility();
-                
-                const inputField = inputBlock.querySelector("input[type='text']");
-                const numberSpan = inputBlock.querySelector(".switch-input__number");
-                const removeButton = inputBlock.querySelector(".switch-input__remove");
-                
-                if (inputField) {
-                    inputField.value = "1";
-                    if (numberSpan) numberSpan.textContent = "1";
-                    if (removeButton) removeButton.classList.remove("disabled");
-                }
-                
-                updateTotalQuantity();
-                toggleSelectAgeVisibility();
-            }
-        });
-    });
-    
-    function updateTotalQuantity() {
-        let total = 0;
-        document.querySelectorAll(".switch-input[id]:not(.hidden) input[type='text']").forEach(input => {
-            total += parseInt(input.value, 10) || 0;
-        });
-        if (totalQuantityText && total > 0) {
-            totalQuantityText.textContent = `Количество человек: ${total}`;
-        } else {
-            totalQuantityText.textContent = "Количество человек";
-        }
-        if (totalQuantityInput) totalQuantityInput.value = total > 0 ? total : "";
-    }
-    
-    function toggleSelectAgeVisibility() {
-        const allInputs = document.querySelectorAll(".switch-input[id]");
-        const hiddenInputs = document.querySelectorAll(".switch-input[id].hidden");
+    document.querySelectorAll(".select-quantity").forEach(selectQuantityBlock => {
+        const totalQuantityText = selectQuantityBlock.querySelector(".select-quantity__text");
+        const totalQuantityInput = selectQuantityBlock.querySelector(".select-quantity__main-input");
+        const placeholderText = selectQuantityBlock.querySelector(".select-quantity__placeholder-text");
+        const selectAgeBlock = selectQuantityBlock.querySelector(".select-age");
+        const ageSelectItems = selectQuantityBlock.querySelectorAll(".select-age ul li");
 
-        if (hiddenInputs.length === 0 && allInputs.length > 0) {
-            selectAgeBlock.classList.add("hidden");
-        } else {
-            selectAgeBlock.classList.remove("hidden");
+        ageSelectItems.forEach(item => {
+            item.addEventListener("click", function () {
+                const age = this.getAttribute("data-age");
+                const inputBlock = document.getElementById(age);
+
+                if (inputBlock && inputBlock.hasAttribute("id")) {
+                    inputBlock.classList.remove("hidden");
+                    this.classList.add("active");
+                    toggleSelectAgeVisibility(selectQuantityBlock);
+
+                    const inputField = inputBlock.querySelector("input[type='text']");
+                    const numberSpan = inputBlock.querySelector(".switch-input__number");
+                    const removeButton = inputBlock.querySelector(".switch-input__remove");
+
+                    if (inputField) {
+                        inputField.value = "1";
+                        if (numberSpan) numberSpan.textContent = "1";
+                        if (removeButton) removeButton.classList.remove("disabled");
+                    }
+
+                    updateTotalQuantity(selectQuantityBlock);
+                }
+            });
+        });
+
+        selectQuantityBlock.addEventListener("click", function (event) {
+            if (!event.target.classList.contains("switch-input__remove")) return;
+
+            const removeButton = event.target;
+            const inputBlock = removeButton.closest(".switch-input");
+
+            if (!inputBlock) return;
+
+            if (!inputBlock.hasAttribute("id")) return;
+
+            if (removeButton.classList.contains("disabled")) {
+                inputBlock.classList.add("hidden");
+
+                const age = inputBlock.getAttribute("id");
+                const relatedLi = selectQuantityBlock.querySelector(`.select-age ul li[data-age="${age}"]`);
+                if (relatedLi) relatedLi.classList.remove("active");
+            }
+
+            updateTotalQuantity(selectQuantityBlock);
+        });
+
+        function updateTotalQuantity(container) {
+            let total = 0;
+            let ageSummary = [];
+
+            container.querySelectorAll(".switch-input[id]:not(.hidden)").forEach(inputBlock => {
+                const inputField = inputBlock.querySelector("input[type='text']");
+                const ageCategory = inputBlock.querySelector(".switch-input__text")?.textContent;
+                const quantity = parseInt(inputField?.value, 10) || 0;
+
+                if (quantity > 0 && ageCategory) {
+                    ageSummary.push(`(${quantity}) ${ageCategory}`);
+                    total += quantity;
+                }
+            });
+
+            totalQuantityText.textContent = ageSummary.length > 0 ? ageSummary.join(", ") : "Количество человек";
+            totalQuantityInput.value = total > 0 ? total : "";
+
+            if (placeholderText) {
+                placeholderText.classList.toggle("hidden", total > 0);
+            }
+
+            toggleSelectAgeVisibility(container);
         }
-    }
+
+        function toggleSelectAgeVisibility(container) {
+            const allInputs = container.querySelectorAll(".switch-input[id]");
+            const hiddenInputs = container.querySelectorAll(".switch-input[id].hidden");
+
+            selectAgeBlock.classList.toggle("hidden", hiddenInputs.length === 0 && allInputs.length > 0);
+        }
+    });
 });
 
 /*- select-rooms -*/
@@ -484,62 +625,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
 /*- select-quantities -*/
 document.addEventListener("DOMContentLoaded", function () {
-    document.querySelectorAll(".select-rooms").forEach(selectRooms => {
-        const roomSelectItems = selectRooms.querySelectorAll(".select-quantities__dropdown ul li");
-        const totalRoomsText = selectRooms.querySelector(".select-rooms__text");
-        const totalRoomsInput = selectRooms.querySelector(".select-rooms__main-input");
-        const switchInputs = selectRooms.querySelectorAll(".switch-input");
-        const selectQuantities = selectRooms.querySelector(".select-quantities");
-        
+    document.querySelectorAll(".select-rooms").forEach(selectRoomBlock => {
+        const roomSelectItems = selectRoomBlock.querySelectorAll(".select-quantities__dropdown ul li");
+        const totalRoomsText = selectRoomBlock.querySelector(".select-rooms__text");
+        const totalRoomsInput = selectRoomBlock.querySelector(".select-rooms__main-input");
+        const placeholderText = selectRoomBlock.querySelector(".select-rooms__placeholder-text");
+        const selectQuantitiesBlock = selectRoomBlock.querySelector(".select-quantities");
+        const switchInputList = selectRoomBlock.querySelector(".switch-input-list");
+
         roomSelectItems.forEach(item => {
             item.addEventListener("click", function () {
-                const roomId = this.getAttribute("data-age");
-                const roomBlock = selectRooms.querySelector(`#${roomId}`);
-                
+                const roomId = this.getAttribute("data-room");
+                const roomBlock = selectRoomBlock.querySelector(`#${roomId}`);
+
                 if (roomBlock) {
                     roomBlock.classList.remove("hidden");
-                    this.classList.add("active");
-                    initializeInput(roomBlock);
-                    updateTotalRooms();
-                    checkAllSelected();
+                    updateActiveState(selectRoomBlock, roomId);
+                    
+                    const inputField = roomBlock.querySelector("input[type='text']");
+                    const numberSpan = roomBlock.querySelector(".switch-input__number");
+                    const removeButton = roomBlock.querySelector(".switch-input__remove");
+
+                    if (inputField) inputField.value = "1";
+                    if (numberSpan) numberSpan.textContent = "1";
+                    if (removeButton) removeButton.classList.remove("disabled");
+
+                    updateTotalRooms(selectRoomBlock);
                 }
             });
         });
-        
-        selectRooms.addEventListener("click", function (event) {
-            if (event.target.matches(".switch-input__add, .switch-input__remove")) {
-                handleSwitchInput(event.target);
-            }
+
+        selectRoomBlock.querySelectorAll(".switch-input__remove").forEach(removeButton => {
+            removeButton.addEventListener("click", function () {
+                const roomBlock = this.closest(".switch-input");
+
+                if (roomBlock) {
+                    if (removeButton.classList.contains("disabled")) {
+                        roomBlock.classList.add("hidden");
+                        updateActiveState(selectRoomBlock, roomBlock.id);
+                        updateTotalRooms(selectRoomBlock);
+                    }
+                }
+            });
         });
-        
-        function initializeInput(roomBlock) {
-            const inputField = roomBlock.querySelector("input[type='text']");
-            const numberSpan = roomBlock.querySelector(".switch-input__number");
-            const removeButton = roomBlock.querySelector(".switch-input__remove");
-            
-            if (inputField) {
-                inputField.value = "1";
-                if (numberSpan) numberSpan.textContent = "1";
-                if (removeButton) removeButton.classList.remove("disabled");
-            }
-        }
-        
-        function updateTotalRooms() {
+
+        function updateTotalRooms(container) {
             let total = 0;
-            switchInputs.forEach(inputBlock => {
-                const inputField = inputBlock.querySelector("input[type='text']");
-                if (inputField) {
-                    total += parseInt(inputField.value, 10) || 0;
+            let roomSummary = [];
+
+            container.querySelectorAll(".switch-input[id]:not(.hidden)").forEach(roomBlock => {
+                const inputField = roomBlock.querySelector("input[type='text']");
+                const roomName = roomBlock.querySelector(".switch-input__text")?.textContent;
+                const quantity = parseInt(inputField?.value, 10) || 0;
+
+                if (quantity > 0 && roomName) {
+                    roomSummary.push(`(${quantity}) ${roomName}`);
+                    total += quantity;
                 }
             });
-            totalRoomsText.textContent = total > 0 ? `Выбрано номеров: ${total}` : "Количество номеров";
+
+            totalRoomsText.textContent = roomSummary.length > 0 ? roomSummary.join(", ") : "Количество номеров";
             totalRoomsInput.value = total > 0 ? total : "";
+
+            if (placeholderText) {
+                placeholderText.classList.toggle("hidden", total > 0);
+            }
+
+            const allRooms = switchInputList.querySelectorAll(".switch-input[id]");
+            const hiddenRooms = switchInputList.querySelectorAll(".switch-input[id].hidden");
+
+            selectQuantitiesBlock.classList.toggle("hidden", hiddenRooms.length === 0 && allRooms.length > 0);
         }
-        
-        function checkAllSelected() {
-            const allItems = selectRooms.querySelectorAll(".select-quantities__dropdown ul li");
-            const activeItems = selectRooms.querySelectorAll(".select-quantities__dropdown ul li.active");
-            selectQuantities.classList.toggle("hidden", allItems.length === activeItems.length);
+
+        function updateActiveState(container, roomId) {
+            const roomItem = container.querySelector(`.select-quantities__dropdown ul li[data-room="${roomId}"]`);
+            const roomBlock = container.querySelector(`#${roomId}`);
+
+            if (roomItem) {
+                roomItem.classList.toggle("active", !roomBlock.classList.contains("hidden"));
+            }
         }
     });
 });
@@ -910,7 +1074,6 @@ document.addEventListener("DOMContentLoaded", function () {
     updateLightpickDays();
 });
 
-
 /*- select-calendar -*/
 document.addEventListener("DOMContentLoaded", function () {
     document.querySelectorAll(".calendar").forEach(calendar => {
@@ -1190,6 +1353,261 @@ function init() {
     // Добавляем маркер на карту
     myMap.geoObjects.add(customPlacemark);
 }
+
+/*- form tabs -*/
+document.addEventListener("DOMContentLoaded", function () {
+    /*- Transfer Block -*/
+    const transferBtn = document.getElementById("transfer-nav");
+    const transferDropdown = document.getElementById("transfer");
+    const needTransfer = document.getElementById("need-transfer");
+    const cancelTransfer = document.getElementById("cancel-transfer");
+
+    if (transferDropdown && needTransfer && cancelTransfer) {
+        needTransfer.checked = false;
+        cancelTransfer.checked = true;
+        transferDropdown.classList.remove("show");
+    }
+
+    if (transferBtn && transferDropdown && needTransfer && cancelTransfer) {
+        transferBtn.addEventListener("click", function (event) {
+            const target = event.target;
+            if (target === needTransfer) {
+                transferDropdown.classList.add("show");
+            } else if (target === cancelTransfer) {
+                transferDropdown.classList.remove("show");
+            }
+        });
+    }
+
+    /*- Transportation City Block -*/
+    const cityNav = document.getElementById("transfer-city-nav");
+    const cityDropdown = document.getElementById("transfer-city");
+    const needTransport = document.getElementById("need-transport-2");
+    const cancelTransport = document.getElementById("cancel-transfer-2");
+
+    if (cityDropdown && needTransport && cancelTransport) {
+        needTransport.checked = false;
+        cancelTransport.checked = true;
+        cityDropdown.classList.remove("show");
+    }
+
+    if (cityNav && cityDropdown && needTransport && cancelTransport) {
+        cityNav.addEventListener("click", function (event) {
+            const target = event.target;
+            if (target === needTransport) {
+                cityDropdown.classList.add("show");
+            } else if (target === cancelTransport) {
+                cityDropdown.classList.remove("show");
+            }
+        });
+    }
+
+    /*- Hotel Block -*/
+    const hotelNav = document.getElementById("n-hotel-nav");
+    const hotelDropdown = document.getElementById("n-hotel");
+    const needHotel = document.getElementById("need-hotel");
+    const cancelHotel = document.getElementById("cancel-hotel");
+
+    if (hotelDropdown && needHotel && cancelHotel) {
+        needHotel.checked = false;
+        cancelHotel.checked = true;
+        hotelDropdown.classList.remove("show");
+    }
+
+    if (hotelNav && hotelDropdown && needHotel && cancelHotel) {
+        hotelNav.addEventListener("click", function (event) {
+            const target = event.target;
+            if (target === needHotel) {
+                hotelDropdown.classList.add("show");
+            } else if (target === cancelHotel) {
+                hotelDropdown.classList.remove("show");
+            }
+        });
+    }
+
+    /*- Transportation Transfers Block -*/
+    const transportationNav = document.getElementById("transportation-transfers-nav");
+    const transportationDropdown = document.getElementById("transportation-transfers");
+    const needTransportation = document.getElementById("need-transport-4");
+    const cancelTransportation = document.getElementById("cancel-transfer-4");
+
+    if (transportationDropdown && needTransportation && cancelTransportation) {
+        needTransportation.checked = false;
+        cancelTransportation.checked = true;
+        transportationDropdown.classList.remove("show");
+    }
+
+    if (transportationNav && transportationDropdown && needTransportation && cancelTransportation) {
+        transportationNav.addEventListener("click", function (event) {
+            const target = event.target;
+            if (target === needTransportation) {
+                transportationDropdown.classList.add("show");
+            } else if (target === cancelTransportation) {
+                transportationDropdown.classList.remove("show");
+            }
+        });
+    }
+
+    /*- Specify Hotel Block -*/
+    const specifyHotelNav = document.getElementById("specify-hotel-nav");
+    const specifyHotelDropdown = document.getElementById("specify-hotel");
+    const needHotel2 = document.getElementById("need-hotel-2");
+    const cancelHotel2 = document.getElementById("cancel-hotel-2");
+
+    if (specifyHotelDropdown && needHotel2 && cancelHotel2) {
+        needHotel2.checked = false;
+        cancelHotel2.checked = true;
+        specifyHotelDropdown.classList.remove("show");
+    }
+
+    if (specifyHotelNav && specifyHotelDropdown && needHotel2 && cancelHotel2) {
+        specifyHotelNav.addEventListener("click", function (event) {
+            const target = event.target;
+            if (target === needHotel2) {
+                specifyHotelDropdown.classList.add("show");
+            } else if (target === cancelHotel2) {
+                specifyHotelDropdown.classList.remove("show");
+            }
+        });
+    }
+
+    /*- need-transpor -*/
+    const checkbox = document.getElementById("need-transport-3");
+    const dropdown = document.getElementById("add-transportation");
+    
+    if (checkbox && dropdown) {
+        checkbox.checked = false;
+        checkbox.addEventListener("change", function () {
+            if (checkbox.checked) {
+                dropdown.classList.add("show");
+            } else {
+                dropdown.classList.remove("show");
+            }
+        });
+    }
+});
+
+/*- support-block -*/
+document.addEventListener("DOMContentLoaded", function () {
+    /*- support-block 1 -*/
+    const supportBlock1 = document.getElementById("support-block");
+    if (supportBlock1) {
+        const checkboxBlock1 = supportBlock1.querySelector(".checkbox.checkbox_indent-top");
+        const radios1 = document.querySelectorAll("input[name='support']");
+
+        radios1.forEach(radio => {
+            radio.addEventListener("change", function () {
+                if (this.id === "support-1" || this.id === "support-2") {
+                    supportBlock1.classList.add("show");
+                } else {
+                    supportBlock1.classList.remove("show");
+                }
+
+                if (this.id === "support-1") {
+                    checkboxBlock1.classList.remove("hidden");
+                } else {
+                    checkboxBlock1.classList.add("hidden");
+                }
+            });
+        });
+    }
+
+    /*- support-block 2 -*/
+    const supportBlock2 = document.getElementById("support-block-2");
+    if (supportBlock2) {
+        const checkboxBlock2 = supportBlock2.querySelector(".checkbox.checkbox_indent-top");
+        const radios2 = document.querySelectorAll("input[name='support-2']");
+
+        radios2.forEach(radio => {
+            radio.addEventListener("change", function () {
+                if (this.id === "support-v-1" || this.id === "support-v-2") {
+                    supportBlock2.classList.add("show");
+                } else {
+                    supportBlock2.classList.remove("show");
+                }
+
+                if (this.id === "support-v-1") {
+                    checkboxBlock2.classList.remove("hidden");
+                } else {
+                    checkboxBlock2.classList.add("hidden");
+                }
+            });
+        });
+    }
+});
+
+/*- type-trip -*/
+document.addEventListener("DOMContentLoaded", () => {
+    const typeTripNav = document.getElementById("type-trip-nav");
+    if (!typeTripNav) return;
+
+    const inputs = {
+        "excursions": document.getElementById("excursions"),
+        "trip-countryside": document.getElementById("trip-countryside"),
+        "trip-another-city": document.getElementById("trip-another-city")
+    };
+
+    const infoBlocks = {
+        "excursions": document.getElementById("type-trip-1"),
+        "trip-countryside": document.getElementById("type-trip-2"),
+        "trip-another-city": document.getElementById("type-trip-3")
+    };
+
+    Object.values(inputs).forEach(input => {
+        if (input) input.checked = false;
+    });
+
+    function toggleInfo(event) {
+        Object.values(infoBlocks).forEach(block => {
+            if (block) block.classList.remove("show");
+        });
+        
+        const selectedInput = event.target.id;
+        if (infoBlocks[selectedInput]) {
+            infoBlocks[selectedInput].classList.add("show");
+        }
+    }
+    
+    Object.values(inputs).forEach(input => {
+        if (input) input.addEventListener("change", toggleInfo);
+    });
+});
+
+/*- type-recreation -*/
+document.addEventListener("DOMContentLoaded", () => {
+    const typeRecreationNav = document.getElementById("type-recreation-nav");
+    if (!typeRecreationNav) return;
+
+    const inputs = {
+        "excursions-2": document.getElementById("excursions-2"),
+        "trip-countryside-2": document.getElementById("trip-countryside-2")
+    };
+
+    const infoBlocks = {
+        "excursions-2": document.getElementById("type-recreation-1"),
+        "trip-countryside-2": document.getElementById("type-recreation-2")
+    };
+
+    // Сброс checked у всех radio при загрузке страницы
+    Object.values(inputs).forEach(input => {
+        if (input) input.checked = false;
+    });
+
+    function toggleInfo(event) {
+        Object.values(infoBlocks).forEach(block => {
+            if (block) block.classList.remove("show");
+        });
+        
+        const selectedInput = event.target.id;
+        if (infoBlocks[selectedInput]) {
+            infoBlocks[selectedInput].classList.add("show");
+        }
+    }
+    
+    Object.values(inputs).forEach(input => {
+        if (input) input.addEventListener("change", toggleInfo);
+    });
+});
 
 
 
