@@ -1,4 +1,45 @@
 /* 1220 */
 @media (max-width: 1220px) {
-	
+
+[class*="__container"] {
+  max-width: 100%;
+}
+
+.transport {
+	grid-template-columns: repeat(3, 1fr);
 	}
+
+.feedback {
+	&__in {
+		gap: 0 50px;
+		}
+	}
+
+}
+
+/* 1024 */
+@media (max-width: 1023px) {
+
+.main-nav {
+	ul {
+		gap: 0 30px;
+		}
+	}
+
+.field-list {
+	&__item {
+		width: 33.33%;
+		}
+	}
+
+.radio-list {
+	&_pos-horizontal {
+		gap: 0 25px;
+		}
+	}
+
+.hotels {
+	grid-template-columns: repeat(2, 1fr);
+	}
+
+}

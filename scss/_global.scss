@@ -227,6 +227,12 @@ textarea::-webkit-input-placeholder {
   display: flex;
   align-items: flex-start;
   gap: 0 10px;
+  &_indent-top {
+    margin-top: 20px;
+    }
+  &.hidden {
+    display: none;
+    }
   input {
     position: relative;
     display: block;
@@ -781,6 +787,12 @@ textarea::-webkit-input-placeholder {
 /* date-trip-input */
 .date-trip-input {
   position: relative;
+  input {
+    padding: 0 50px 0 20px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    }
   &__text {
     position: absolute;
     display: block;
