@@ -1,0 +1,121 @@
+/* root */
+:root {
+
+  /* text color */
+  --primary-text-color: #000;
+  --secondary-text-color: #06ACED;
+  --tertiary-text-color: #FFFFFF;
+  --quaternary-text-color: #B4B4B4;
+  --fifth-text-color: #3498D7;
+  --six-text-color: #C9C6C6;
+  --seven-text-color: #C4C4C4;
+  --eight-text-color: #E28E41;
+  --nine-text-color: #A90B0B;
+  --ten-text-color: #666666;
+  --eleven-text-color: #6E6E6E;
+  --twelve-text-color: #333333;
+  --thirteen-text-color: #000;
+  --fourteen-text-color: #000000;
+  --fifteen-text-color: #C4C4C4;
+
+  /* font-family */
+  --primary-font-family: 'Inter', sans-serif;
+
+  /* font-weight */
+  --primary-font-weight: 400;
+  --secondary-font-weight: 500;
+  --tertiary-font-weight: 600;
+  --quaternary-font-weight: 700;
+  --fifth-font-weight: 800;
+
+  /* border-color */
+  --primary-border-color: #CCC6C1;
+  --secondary-border-color: #C4D3D9;
+  --tertiary-border-color: #E28E41;
+  --quaternary-border-color: #06ACED;
+  --fifth-border-color: #A90B0B;
+  --six-border-color: #8B8B8B;
+  --seven-border-color: #787878;
+  --eight-border-color: #AAAAAA;
+  --nine-border-color: #FFFFFF;
+  --ten-border-color: #646464;
+  --eleven-border-color: #B4B4B4;
+  --twelve-border-color: #FFFFFF;
+
+  /* btn-color */
+  --primary-btn-color: #E28E41;
+  --secondary-btn-color: #B1641E;
+  --tertiary-btn-color: #FFFFFF;
+  --quaternary-btn-color: #C4D3D9;
+  --fifth-btn-color: #06ACED;
+  --six-btn-color: #E6F3F8;
+  --seven-btn-color: #FFFFFF;
+
+  /* background-color */
+  --primary-background-color: #FFFFFF;
+  --secondary-background-color: #F9F9F9;
+  --tertiary-background-color: #0066A7;
+  --quaternary-background-color: #E28E41;
+  --fifth-background-color: #06ACED;
+  --six-background-color: #F2F3F4;
+  --seven-background-color: #F4F4F4;
+  --eight-background-color: rgba(0, 0, 0, 0.6);
+  --nine-background-color: #E28E41;
+  --ten-background-color: url(../img/bg/gl-dec.jpg) top center no-repeat;
+
+  /* widget-color */
+  --primary-widget-color: rgba(255, 255, 255, 0.7);
+  --secondary-widget-color: #FFFFFF;
+  --tertiary-widget-color: rgba(255, 255, 255, 0.7);
+
+  /* slider-nav-bg */
+  --primary-bullet-color: #C4D3D9;
+  --secondary-bullet-color: #06ACED;
+
+  /* icon-color */
+  --primary-icon-color: #000;
+
+  /* page-nav-color */
+  --primary-page-nav-color: url(../img/icons/page-nav-arrow.svg) center no-repeat;
+
+  }
+
+/* dark-theme */
+[data-theme="dark"] {
+
+  /* text color */
+  --primary-text-color: #FFFFFF;
+  --ten-text-color: #C4D3D9;
+  --eleven-text-color: #8DA4AD;
+  --twelve-text-color: #8DA4AD;
+  --fourteen-text-color: #C4D3D9;
+  --fifteen-text-color: #000;
+
+  /* border-color */
+  --primary-border-color: #334A53;
+  --secondary-border-color: #6F868F;
+  --nine-border-color: #011821;
+  --ten-border-color: #8DA4AD;
+  --twelve-border-color: #C4D3D9;
+
+  /* btn-color */
+  --seven-btn-color: rgba(0, 0, 0, 0);
+
+  /* background-color */
+  --primary-background-color: #011821;
+  --secondary-background-color: #034A67;
+  --tertiary-background-color: #011821;
+  --seven-background-color: #000;
+  --ten-background-color: url(../img/bg/gl-dec-dark.jpg) top center no-repeat;
+
+  /* widget-color */
+  --primary-widget-color: rgba(1, 24, 33, 0.7);
+  --secondary-widget-color: #022B3B;
+
+  /* icon-color */
+  --primary-icon-color: #FFFFFF;
+
+  /* page-nav-color */
+  --primary-page-nav-color: url(../img/icons/page-nav-arrow-w.svg) center no-repeat;
+
+  }

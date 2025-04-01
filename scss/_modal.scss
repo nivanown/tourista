@@ -1,0 +1,81 @@
+/* modal */
+.modal {
+	position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  opacity: 0;
+ 	visibility: hidden;
+  transition: .5s all;
+  color: var(--thirteen-text-color);
+  z-index: 99;
+  &.show {
+  	opacity: 1;
+ 	 	visibility: visible;
+  	}
+  &__content {
+  	position: relative;
+	  padding: 150px 20px;
+	  z-index: 5;
+  	}
+  &__in {
+  	position: relative;
+  	margin: 0 auto;
+  	padding: 77px 120px 100px;
+  	max-width: 685px;
+  	background: url(../img/bg/modal-dec.jpg) center no-repeat;
+		background-size: cover;
+  	border-radius: 20px;
+  	p {
+  		font-size: 20px;
+  		line-height: 28px;
+  		}
+  	}
+  &__close-btn {
+  	position: absolute;
+  	display: block;
+  	width: 28px;
+  	height: 28px;
+  	top: 35px;
+  	right: 44px;
+  	font-size: 0;
+  	background: url(../img/icons/close.svg) center no-repeat;
+		background-size: 100%;
+		cursor: pointer;
+		transition: .3s opacity;
+		&:hover {
+			opacity: 0.6;
+			}
+  	}
+  &__dec {
+  	position: absolute;
+  	width: 68px;
+  	height: 43px;
+  	left: 30px;
+  	bottom: 35px;
+  	background: url(../img/src/dec-img.svg) center no-repeat;
+		background-size: 100%;
+  	}
+	&__overlay {
+		position: fixed;
+	  width: 100%;
+	  height: 100%;
+	  top: 0;
+	  left: 0;
+	  background: var(--eight-background-color);
+	  z-index: 3;
+	  pointer-events: none;
+		}
+	&.changed {
+		.modal__in {
+			padding: 40px 78px;
+			max-width: 738px;
+			}
+		.modal__close-btn {
+			top: 25px;
+			right: 25px;
+			}
+		}
+	}

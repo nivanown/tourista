@@ -1,0 +1,153 @@
+/* header */
+.header {
+	position: relative;
+	border-bottom: 1px solid var(--primary-border-color);
+	background: var(--primary-background-color);
+	z-index: 30;
+	&__in {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0 20px;
+		padding: 15px 0;
+		}
+	&__logo {
+		flex-shrink: 0;
+		width: 80px;
+		img {
+			width: 100%;
+			}
+		}
+	&__phone {
+		display: none;
+		}
+	}
+
+/* main-nav */
+.main-nav {
+	ul {
+		display: flex;
+		align-items: center;
+		gap: 0 60px;
+		}
+	li {
+		font-size: 16px;
+		font-weight: var(--secondary-font-weight);
+		line-height: 24px;
+		&.active {
+			a {
+				color: var(--secondary-text-color);
+				}
+			}
+		}
+	a {
+		color: var(--primary-text-color);
+		&:hover {
+			color: var(--secondary-text-color);
+			}
+		}
+	}
+
+/* user-panel */
+.user-panel {
+	display: flex;
+	align-items: center;
+	gap: 0 20px;
+	}
+
+/* personal-account */
+.personal-account {
+	display: block;
+	width: 24px;
+	transition: .5s opacity;
+	svg {
+		stroke: var(--primary-icon-color) !important;
+		}
+	&:hover {
+		opacity: 0.6;
+		}
+	}
+
+/* color-btn */
+.color-btn {
+	display: block;
+	width: 24px;
+	cursor: pointer;
+	transition: .5s opacity;
+	svg {
+		stroke: var(--primary-icon-color) !important;
+		cursor: pointer;
+		}
+	&:hover {
+		opacity: 0.6;
+		}
+	}
+
+/* language */
+.language {
+	position: relative;
+	&__text {
+		position: relative;
+		display: block;
+		padding: 0 17px 0 0;
+		font-size: 16px;
+		font-weight: var(--secondary-font-weight);
+		line-height: 22px;
+		cursor: pointer;
+		transition: .5s color;
+		&:hover {
+			color: var(--secondary-text-color);
+			}
+		&:after {
+			position: absolute;
+			display: block;
+			margin: -3.5px 0 0;
+			width: 11px;
+			height: 7px;
+			top: 50%;
+			right: 0;
+			background: url(../img/icons/down-arrow.svg) center no-repeat;
+			background-size: 100%;
+			content: "";
+			transition: .5s all;
+			}
+		&.open {
+			&:after {
+				transform: rotate(180deg);
+				}
+			}
+		}
+	&__dropdown {
+		position: absolute;
+		padding: 10px 20px;
+		width: 70px;
+		top: 25px;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 1px solid var(--secondary-border-color);
+		background: var(--primary-background-color);
+		border-radius: 10px;
+		opacity: 0;
+		visibility: hidden;
+		transition: .5s all;
+		&.show {
+			opacity: 1;
+			visibility: visible;
+			}
+		}
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 10px 0;
+		li {
+			font-size: 16px;
+			line-height: 24px;
+			}
+		a {
+			color: var(--primary-text-color);
+			&:hover {
+				color: var(--secondary-text-color);
+				}
+			}
+		}
+	}
