@@ -1,12 +1,24 @@
 /*- data-theme -*/
-const button = document.querySelector(".color-btn");
-        
-button.addEventListener("click", () => {
-    document.documentElement.toggleAttribute("data-theme");
-    if (document.documentElement.hasAttribute("data-theme")) {
+function applyTheme(theme) {
+    if (theme === "dark") {
         document.documentElement.setAttribute("data-theme", "dark");
     } else {
         document.documentElement.removeAttribute("data-theme");
+    }
+}
+
+const savedTheme = localStorage.getItem("theme") || "light";
+applyTheme(savedTheme);
+
+document.addEventListener("DOMContentLoaded", () => {
+    const button = document.querySelector(".color-btn");
+
+    if (button) {
+        button.addEventListener("click", () => {
+            const newTheme = document.documentElement.hasAttribute("data-theme") ? "light" : "dark";
+            applyTheme(newTheme);
+            localStorage.setItem("theme", newTheme);
+        });
     }
 });
 
@@ -395,9 +407,11 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".select-quantity").forEach(selectQuantity => {
         const textDisplay = selectQuantity.querySelector(".select-quantity__text");
-        const fieldInput = selectQuantity.closest(".field-list")?.querySelector(".select-quantity__main-input");
+        const fieldInput = selectQuantity.querySelector(".select-quantity__main-input");
         const inputs = selectQuantity.querySelectorAll(".switch-input");
         const placeholderText = selectQuantity.querySelector(".select-quantity__placeholder-text");
+
+        if (!textDisplay || !fieldInput) return;
 
         function updateText() {
             const values = [];
@@ -410,14 +424,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            const hasSelection = values.length > 0;
-            textDisplay.textContent = hasSelection ? values.join(", ") : "";
+            const newValue = values.length > 0 ? values.join(", ") : "";
 
-            if (fieldInput) {
-                fieldInput.value = textDisplay.textContent;
+            if (fieldInput.value.trim() !== "" && values.length === 0) {
+                textDisplay.textContent = fieldInput.value.trim();
+            } else {
+                textDisplay.textContent = newValue;
+                if (fieldInput) fieldInput.value = newValue;
             }
 
-            if (hasSelection) {
+            if (textDisplay.textContent.trim() !== "") {
                 selectQuantity.classList.add("selected");
                 if (placeholderText) placeholderText.classList.add("hidden");
             } else {
@@ -426,15 +442,29 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        if (fieldInput.value.trim() !== "") {
+            textDisplay.textContent = fieldInput.value.trim();
+            selectQuantity.classList.add("selected");
+            if (placeholderText) placeholderText.classList.add("hidden");
+        } else {
+            textDisplay.textContent = "";
+            selectQuantity.classList.remove("selected");
+            if (placeholderText) placeholderText.classList.remove("hidden");
+        }
+
         inputs.forEach(input => {
             const number = input.querySelector(".switch-input__number");
             const observer = new MutationObserver(updateText);
             observer.observe(number, { childList: true, subtree: true });
         });
 
+        fieldInput.addEventListener("input", updateText);
+        fieldInput.addEventListener("change", updateText);
+
         updateText();
     });
 });
+
 
 /*- select-age -*/
 document.addEventListener("DOMContentLoaded", function () {
@@ -533,6 +563,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const inputs = selectRooms.querySelectorAll(".switch-input");
         const placeholderText = selectRooms.querySelector(".select-rooms__placeholder-text");
 
+        if (!textDisplay || !fieldInput) return;
+
         function updateText() {
             const values = [];
             inputs.forEach(input => {
@@ -544,14 +576,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            const hasSelection = values.length > 0;
-            textDisplay.textContent = hasSelection ? values.join(", ") : "";
+            const newValue = values.length > 0 ? values.join(", ") : "";
 
-            if (fieldInput) {
-                fieldInput.value = textDisplay.textContent;
+            if (fieldInput.value.trim() !== "" && values.length === 0) {
+                textDisplay.textContent = fieldInput.value.trim();
+            } else {
+                textDisplay.textContent = newValue;
+                fieldInput.value = newValue;
             }
 
-            if (hasSelection) {
+            if (textDisplay.textContent.trim() !== "") {
                 selectRooms.classList.add("selected");
                 if (placeholderText) placeholderText.classList.add("hidden");
             } else {
@@ -560,11 +594,24 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
+        if (fieldInput.value.trim() !== "") {
+            textDisplay.textContent = fieldInput.value.trim();
+            selectRooms.classList.add("selected");
+            if (placeholderText) placeholderText.classList.add("hidden");
+        } else {
+            textDisplay.textContent = "";
+            selectRooms.classList.remove("selected");
+            if (placeholderText) placeholderText.classList.remove("hidden");
+        }
+
         inputs.forEach(input => {
             const number = input.querySelector(".switch-input__number");
             const observer = new MutationObserver(updateText);
             observer.observe(number, { childList: true, subtree: true });
         });
+
+        fieldInput.addEventListener("input", updateText);
+        fieldInput.addEventListener("change", updateText);
 
         updateText();
     });
@@ -845,30 +892,38 @@ document.addEventListener("DOMContentLoaded", function () {
 document.addEventListener("DOMContentLoaded", function () {
     const input = document.getElementById("date-trip");
     const label = document.querySelector(".date-trip-input__text");
-    const dateTripInput = document.querySelector(".date-trip-input"); // Контейнер input
+    const dateTripInput = document.querySelector(".date-trip-input");
 
-    if (!input || !label || !dateTripInput) return; // Проверка на существование элементов
+    if (!input || !label || !dateTripInput) return;
 
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const storedValue = localStorage.getItem("lightpick-selected-dates");
+    const initialValue = (input.getAttribute("value") || "").trim();
 
-    let isCalendarOpen = false;
-    let preventToggle = false;
-
-    input.value = "";
-    localStorage.removeItem("lightpick-selected-dates");
+    if (storedValue && initialValue !== "") {
+        input.value = storedValue;
+    } else if (initialValue) {
+        localStorage.setItem("lightpick-selected-dates", initialValue);
+    } else {
+        localStorage.removeItem("lightpick-selected-dates");
+    }
 
     function toggleLabel() {
         const hasValue = input.value.trim() !== "";
 
         if (hasValue) {
             label.classList.add("hidden");
-            dateTripInput.classList.add("selected"); // Добавляем класс
+            dateTripInput.classList.add("selected");
         } else {
             label.classList.remove("hidden");
-            dateTripInput.classList.remove("selected"); // Убираем класс
+            dateTripInput.classList.remove("selected");
+            localStorage.removeItem("lightpick-selected-dates");
         }
     }
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    let isCalendarOpen = false;
+    let preventToggle = false;
 
     const picker = new Lightpick({
         field: input,
@@ -938,6 +993,8 @@ document.addEventListener("DOMContentLoaded", function () {
             setTimeout(updatePreviousButtonState, 50);
         }
     });
+
+    toggleLabel();
 });
 
 /*- lightpick__day -*/
@@ -1663,8 +1720,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (!dateInput || !fieldDateInput || !fieldDateText) return;
 
-    fieldDateInput.value = "";
-    fieldDateText.classList.remove("hidden");
+    const savedDate = localStorage.getItem("date-trip");
+    if (savedDate && dateInput.defaultValue.trim() !== "") {
+        dateInput.value = savedDate;
+
+        const dateRange = savedDate.split(" - ");
+        if (dateRange.length > 0) {
+            const startDate = dateRange[0].trim();
+            fieldDateInput.value = startDate;
+        }
+    }
+
+    if (fieldDateInput.value.trim() !== "") {
+        fieldDateText.classList.add("hidden");
+    } else {
+        fieldDateText.classList.remove("hidden");
+    }
 
     const updateFieldDate = () => {
         if (dateInput.value.trim() !== "") {
@@ -1673,6 +1744,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 const startDate = dateRange[0].trim();
                 fieldDateInput.value = startDate;
                 fieldDateText.classList.add("hidden");
+                if (dateInput.defaultValue.trim() !== "") {
+                    localStorage.setItem("date-trip", dateInput.value);
+                }
             }
         } else {
             fieldDateInput.value = "";
