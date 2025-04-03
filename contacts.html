@@ -12,6 +12,17 @@
 
     <link href="favicon.ico" rel="shortcut icon">
 
+    <script>
+        (function() {
+            let savedTheme = localStorage.getItem("theme") || "light";
+            if (savedTheme === "dark") {
+                document.documentElement.setAttribute("data-theme", "dark");
+            } else {
+                document.documentElement.removeAttribute("data-theme");
+            }
+        })();
+    </script>
+
 </head>
 
 <body>  
